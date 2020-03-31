@@ -218,8 +218,8 @@ router.get("/deleteWishlist/:id", verifyToken, async (req, res) => {
 //     })
 
 router.get("/checkout", verifyToken, async (req, res) => {
-    const user = await User.findOne({ _id: req.user.user._id }).populate("order.orderId");
-    res.render("public/checkout", { token: req.cookies.jsonwebtoken, user, title: "Önskelista - Lasses" });
+    const user = await User.findOne({ _id: req.user.user._id }).populate("wishlist.candyId");
+    res.render("public/checkout", { token: req.cookies.jsonwebtoken, user, title: "Kassa - Lasses" });
 });
 
 router.get("/checkout/:id", verifyToken, async (req, res) => {
