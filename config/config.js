@@ -7,4 +7,4 @@ const config = {
     mail: process.env.MAIL
 }
 
-module.exports = config;
+module.exports = config; 
