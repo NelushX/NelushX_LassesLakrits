@@ -26,12 +26,12 @@
 				<ul class="wishlist ">
 					<% products.forEach( (candy)=>{ %>
 					<li class="wishlistItem">
-						<a href="/allproducts/<%=candy.firstname %>">
-							<p><%= candy.firstname %></p>
+						<a href="/allproducts/<%=candy.name %>">
+							<p><%= candy.name %></p>
 						</a>
 						<p><%= candy.price %> kr </p>
 						<div>
-							<a href="/allproducts/<%=candy.firstname %>"><img src="<%= candy.img %>"
+							<a href="/allproducts/<%=candy.name %>"><img src="<%= candy.img %>"
 									alt="Bild på lakrits" class="hover wishlistImg"></a>
 						</div>
 						<form id="myform">
