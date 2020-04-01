@@ -10,7 +10,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "sass": "node-sass --watch scss/admin -o public/admin",
     "dev": "npm-run-all --parallel start sass",
     "cypress": "cypress open",
