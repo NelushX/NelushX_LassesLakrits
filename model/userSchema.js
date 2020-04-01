@@ -2,9 +2,14 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
+    firstname: { type: String, required: true },
     password: { type: String, required: true },
     admin: { type: Boolean, default: false },
+    lastname: { type: String },
+    phonenumber: { type: Number },
+    address: { type: String },
+    zip: { type: Number },
+    city: { type: String },
     resetToken: String,
     expirationToken: Date,
     wishlist: [{
@@ -13,13 +18,19 @@ const userSchema = new mongoose.Schema({
             ref: "Candy"
         }
     }],
-    // Användarinfo som finns på myPage
-    userinfo: [{
-        lastname: { type: String },
-        phonenumber: { type: Number },
-        address: { type: String },
-        city: { type: String },
-        zip: { type: Number }
+    cart: [{
+        candyId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Candy"
+        },
+        quantity: {
+            type: Number,
+            require: true
+        },
+        price: {
+            type: Number,
+            require: true
+        }
     }],
     // Användarinfo som fylls i vid beställning
     order: [{
@@ -49,6 +60,45 @@ userSchema.methods.removeFromList = function (candyId) {
     this.wishlist = restOftheProducts;
     return this.save();
 }
+
+userSchema.methods.addToCart = function (candyId) {
+
+    const foundItem = this.cart.find(candy => candy.candyId == candyId)
+
+    !foundItem ? this.cart.push({
+        candyId: candyId,
+        quantity: 1
+    }) :
+        foundItem.quantity++
+
+    return this.save()
+}
+
+userSchema.methods.decreaseQuantityInCart = function (candyId) {
+    const foundItem = this.cart.find(candy => candy.candyId == candyId)
+
+    foundItem.quantity--
+
+    if (foundItem.quantity == 0) {
+        const restOftheProducts = this.cart.filter(candy => candy.candyId.toString() !== candyId)
+        this.cart = restOftheProducts;
+    }
+    return this.save()
+}
+
+userSchema.methods.increaseQuantityInCart = function (candyId) {
+    const foundItem = this.cart.find(candy => candy.candyId == candyId)
+
+    foundItem.quantity++
+    return this.save()
+}
+
+userSchema.methods.removeFromCart = function (candyId) {
+    const restOftheProducts = this.cart.filter(candy => candy.candyId.toString() !== candyId.toString());
+    this.cart = restOftheProducts;
+    return this.save();
+}
+
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

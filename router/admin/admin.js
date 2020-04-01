@@ -38,7 +38,7 @@ router.route("/admin")
             color: req.body.color,
             createdByAdmin: req.body.createdByAdmin,
             img: req.body.img,
-            user: req.body.user
+            user: req.body.user,
         }).save((error, success) => {
             if (error) {
                 res.send(error.message);

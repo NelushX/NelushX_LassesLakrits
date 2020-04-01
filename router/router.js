@@ -1,6 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser")
-const User = require("../model/userSchema")
+const User = require("../model/userSchema");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendGridTransport = require("nodemailer-sendgrid-transport")
@@ -44,8 +43,8 @@ router.route("/allproducts")
 router.route("/allproducts/:id")
     .get(async (req, res) => {
         console.log(req.params.id);
-        const selectedCandy = await Candy.findOne({ name: req.params.id });
-        res.render("oneproduct", { token: req.cookies.jsonwebtoken, selectedCandy, title: "Produkt" });
+        const item = await Candy.findOne({ name: req.params.id });
+        res.render("oneproduct", { token: req.cookies.jsonwebtoken, item, title: "Produkt" });
     })
 
 //Signup sidan
@@ -60,7 +59,7 @@ router.route("/signup")
 
         const user = await new User({
             email: req.body.email,
-            name: req.body.name,
+            firstname: req.body.firstname,
             password: hashPassword
         }).save();
 
@@ -170,6 +169,21 @@ router.get("/mypage", verifyToken, async (req, res) => {
     res.render("userprofile/mypage", { token: req.cookies.jsonwebtoken, user, title: "Medlemssida - Lasses Lakrits" });
 });
 
+// Mypage - Update user information
+router.post("/mypage", verifyToken, async (req, res) => {
+    await User.updateOne({ _id: req.user.user._id },
+        {
+            $set: {
+                lastname: req.body.lastname, 
+                phonenumber: req.body.phoneNr, 
+                address: req.body.address, 
+                zip: req.body.zip,
+                city: req.body.city 
+            }
+        }, { runValidators: true });
+        res.redirect("/mypage"); 
+});
+
 //Logga ut
 router.get("/logout", (req, res) => {
     res.clearCookie("jsonwebtoken").redirect("/login");
@@ -183,7 +197,6 @@ router.get("/deleteuser", verifyToken, async (req, res) => {
 
 router.get("/deleteuser/:id", verifyToken, async (req, res) => {
     await User.deleteOne({ _id: req.user.user._id }, (err, data) => {
-
         if (!err) {
             res.clearCookie("jsonwebtoken").redirect("/login")
         }
@@ -206,34 +219,50 @@ router.get("/wishlist/:id", verifyToken, async (req, res) => {
 
 router.get("/deleteWishlist/:id", verifyToken, async (req, res) => {
     const user = await User.findOne({ _id: req.user.user._id });
-    user.removeFromList(req.params.id);
+    await user.removeFromList(req.params.id);
     res.redirect("/wishlist");
 })
 
-// För att komma till checkout
-// router.route("/checkout")
-//     .get(async (req, res) => {
-//         const shoppingBag = await Candy.find();
-//         res.render("checkout.ejs", { token: req.cookies.jsonwebtoken, shoppingBag, title: "Checkout" });
-//     })
-
 router.get("/checkout", verifyToken, async (req, res) => {
-    const user = await User.findOne({ _id: req.user.user._id }).populate("wishlist.candyId");
-    res.render("public/checkout", { token: req.cookies.jsonwebtoken, user, title: "Kassa - Lasses" });
+    let products = [];
+    const user = await User.findOne({ _id: req.user.user._id });
+    
+    for (let i = 0; i < user.cart.length; i++) {
+        let product = await Candy.findOne({ _id: user.cart[i].candyId });
+        product.quantity = user.cart[i].quantity;
+        products.push(product);
+    }
+
+    res.render("public/checkout", { token: req.cookies.jsonwebtoken, user, products, title: "Kassa - Lasses" });
 });
 
 router.get("/checkout/:id", verifyToken, async (req, res) => {
-    const candy = await Candy.findOne({ _id: req.params.id });
     const user = await User.findOne({ _id: req.user.user._id });
-
-    await user.addToWishList(candy);
+    await user.addToCart(req.params.id);
     res.redirect("/checkout");
 });
 
-router.get("/deleteItem/:id", verifyToken, async (req, res) => {
+router.get("/decreaseQuantityInCart/:id", verifyToken, async (req, res) => {
     const user = await User.findOne({ _id: req.user.user._id });
-    user.removeFromList(req.params.id);
+    await user.decreaseQuantityInCart(req.params.id);
     res.redirect("/checkout");
 })
+
+router.get("/increaseQuantityInCart/:id", verifyToken, async (req, res) => {
+    const user = await User.findOne({ _id: req.user.user._id });
+    await user.increaseQuantityInCart(req.params.id);
+    res.redirect("/checkout");
+})
+
+router.get("/removeCandyInCart/:id", verifyToken, async (req, res) => {
+    const user = await User.findOne({ _id: req.user.user._id });
+    await user.removeFromCart(req.params.id);
+    res.redirect("/checkout");
+})
+
+router.get("/thankyou", verifyToken, async (req, res) => {
+    const user = await User.findOne({ _id: req.user.user._id });
+    res.render("thankyou", {token: req.cookies.jsonwebtoken, user, title: "Medlemssida - Lasses Lakrits"})
+});
 
 module.exports = router;

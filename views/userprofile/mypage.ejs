@@ -5,31 +5,31 @@
     <div class="row justify-content-center py-3"></div>
     <div class="row justify-content-center">
         <div class="col-sm-12 col-md-9 text-center">
-            <h5>Välkommen <%=user.name%>!</h5>
+            <h5>Välkommen <%=user.firstname%>!</h5>
             <p>Här kan du lägga till och ändra din adress.</p>
-            <form action="/userinfo" method="post">
+            <form action="/mypage" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputName2">Efternamn</label>
-                        <input type="email" class="form-control" id="inputName2">
+                        <input type="text" class="form-control" id="inputName2" name="lastname" value="<%=user.lastname%>">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputPhoneNumber">Telefonnummer</label>
-                        <input type="text" class="form-control" id="inputPhoneNumber">
+                        <input type="text" class="form-control" id="inputPhoneNumber" name="phoneNr" value="<%=user.phonenumber%>">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-7">
                         <label for="inputAddress">Adress</label>
-                        <input type="text" class="form-control" id="inputAddress" placeholder="">
+                        <input type="text" class="form-control" id="inputAddress" name="address" value="<%=user.address%>">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="inputZip">Postnummer</label>
-                        <input type="text" class="form-control" id="inputZip">
+                        <input type="text" class="form-control" id="inputZip" name="zip" value="<%=user.zip%>">
                     </div>
                     <div class="form-group col-md-3">
                         <label for="inputCity">Ort</label>
-                        <input type="text" class="form-control" id="inputCity">
+                        <input type="text" class="form-control" id="inputCity" name="city" value="<%=user.city%>">
                     </div>
                 </div>
                 <div class="row justify-content-center">
@@ -46,4 +46,4 @@
             <h6><%- include("logout.ejs") %></h6>
         </div>
     </div>
-</div> 
+</div>

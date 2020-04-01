@@ -11,7 +11,7 @@
             </a>
             <a href="/allproducts/<%= item.name %>"><%= item.name %></a>
             <p><%= item.price %> SEK</p>
-            <button type="button" class="btn btn-outline-dark">Lägg i varukorg</button>
+            <a href="/checkout/<%=item._id %>"><button type="button" class="btn btn-outline-dark">Lägg i varukorg</button></a>
         </div>
         <% }); %>
     </div>
