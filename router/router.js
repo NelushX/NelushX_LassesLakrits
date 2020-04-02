@@ -248,8 +248,8 @@ router.get("/checkout", verifyToken, async (req, res) => {
                 currency: "sek"
             }
         }),
-        success_url: "http://localhost:8000/thankyou",
-        cancel_url: "http://localhost:8000/checkout"
+        success_url: "https://nelushlasseslakrits.herokuapp.com/thankyou",
+        cancel_url: "https://nelushlasseslakrits.herokuapp.com/checkout"
     }).then(function (session) {
 
         res.render("public/checkout", { token: req.cookies.jsonwebtoken, user, products, sessionId: session.id, title: "Kassa - Lasses" });
