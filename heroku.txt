@@ -30,3 +30,6 @@ BETALNINGSLÖSNING
 Använda Stripe api
 - Andra populära tredjepartsbibliotek är paypal och Klarna. 
 
+
+git add + commmit 
+git push heroku oshfohnf (grenen eller master)

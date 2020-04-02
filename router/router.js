@@ -47,7 +47,6 @@ router.route("/allproducts/:id")
         res.render("oneproduct", { token: req.cookies.jsonwebtoken, item, title: "Produkt" });
     })
 
-
 //Signup sidan
 router.route("/signup")
     .get(async (req, res) => {
